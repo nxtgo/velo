@@ -1,0 +1,10 @@
+.git
+store
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.log
+tmp/
+*.md
+
