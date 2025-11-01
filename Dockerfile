@@ -13,7 +13,7 @@ COPY --from=builder /app/velo .
 RUN mkdir -p /app/store
 
 ENV VELO_ADDR=:8080 \
-    VELO_CACHE_DIR=cache \
+    VELO_CACHE_DIR=store \
     VELO_MAX_IMAGE_SIZE=10485760 \
     VELO_WHITELISTED_DOMAINS=.* 
 
