@@ -4,9 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"image"
-	_ "image/gif"
-	_ "image/jpeg"
-	_ "image/png"
 	"io"
 	"net/http"
 	"net/url"
@@ -14,8 +11,24 @@ import (
 	"time"
 	"velo/internal/config"
 
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
+
 	_ "golang.org/x/image/webp"
 )
+
+var client *http.Client
+
+func init() {
+	client = &http.Client{
+		Timeout: 5 * time.Second,
+		Transport: &http.Transport{
+			ForceAttemptHTTP2:  false,
+			DisableCompression: true,
+		},
+	}
+}
 
 func Fetch(src string, cfg config.Config) (image.Image, error) {
 	u, err := url.Parse(src)
@@ -34,8 +47,10 @@ func Fetch(src string, cfg config.Config) (image.Image, error) {
 		return nil, errors.New("fetch: domain not allowed")
 	}
 
-	client := &http.Client{Timeout: time.Second * 5}
-	resp, err := client.Get(src)
+	req, _ := http.NewRequest("GET", src, nil)
+	req.Header.Set("user-agent", "mozilla/5.0 (compatible; velo)")
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
